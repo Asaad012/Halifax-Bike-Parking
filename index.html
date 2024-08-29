@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Parking Locator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="brand">Bike Parking Locator</a>
+            <button class="nav-toggle" id="navToggle">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#search" class="nav-link">Search Nearest Location</a></li>
+                <li><a href="#add-parking" class="nav-link">Add Parking</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="home" class="section active">
+        <div id="map" class="map-container"></div>
+    </section>
+
+    <section id="search" class="section">
+        <h2>Search Nearest Location</h2>
+        <!-- Empty for now -->
+    </section>
+
+    <section id="add-parking" class="section">
+        <h2>Add Parking</h2>
+        <form id="parkingForm">
+            <label for="locationUrl">Enter Parking Location URL or Coordinates:</label>
+            <input type="text" id="locationUrl" name="locationUrl" placeholder="ex: 44.64, -63.60" required>
+            <button type="submit">Submit</button>
+        </form>
+        <ul id="locationList" style="display: none;"></ul> <!-- The list is initially hidden -->
+
+        <!-- Empty for now -->
+    </section>
+
+    <section id="contact" class="section">
+        <h2>Contact Info</h2>
+        <!-- Empty for now -->
+    </section>
+    <script>
+        // Initialize the Leaflet map
+        var map = L.map('map').setView([44.648, -63.60], 13);
+
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        //credit: https://github.com/pointhi/leaflet-color-markers
+        var redIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        fetch('hfxOSM.geojson')
+            .then(response => response.json())
+            .then(data => {
+                data.features.forEach(feature => {
+                    var coords = feature.geometry.coordinates;
+                    L.marker([coords[1], coords[0]], { icon: redIcon }).addTo(map);
+                });
+            })
+            .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+        // Toggle navbar visibility
+        document.getElementById('navToggle').addEventListener('click', function () {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+        var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+}
+
+map.on('click', onMapClick);
+    </script>
+    <script src="parkings.js"></script>
+</body>
+
+</html>
