@@ -1,7 +1,5 @@
 const navbar = document.querySelectorAll("nav div ul li a");
 const sections = document.querySelectorAll(".section");
-console.log(sections);
-//document.body.style.display = "none";
 
 
 navbar.forEach((elemnt) => {
@@ -22,7 +20,7 @@ navbar.forEach((elemnt) => {
         document.getElementById("home").style.display = "block";
         //document.getElementById("map").style.display = "block";
         break;
-      case "Search Nearest Location":
+      case "User Guide":
         document.getElementById("search").style.display = "block";
         break;
       case "Add Parking":
